@@ -44,10 +44,32 @@ app.get('/documents', authMiddleware, (req, res) => {
 });
 
 app.post('/documents', authMiddleware, (req, res) => {
-  const newDocument = req.body;
-  newDocument.id = Date.now();
+  const { title, content } = req.body;
+
+  if (!title || !content) {
+    return res.status(400).json({ message: 'Bad Request. Fields "title" and "content" are required.' });
+  }
+
+  const newDocument = {
+    id: Date.now(),
+    title,
+    content,
+  };
+
   documents.push(newDocument);
   res.status(201).json(newDocument);
+});
+
+app.delete('/documents/:id', authMiddleware, (req, res) => {
+    const documentId = parseInt(req.params.id);
+    const documentIndex = documents.findIndex(doc => doc.id === documentId);
+
+    if (documentIndex === -1) {
+        return res.status(404).json({ message: 'Document not found' });
+    }
+
+    documents.splice(documentIndex, 1);
+    res.status(204).send();
 });
 
 app.get('/employees', authMiddleware, adminOnlyMiddleware, (req, res) => {
