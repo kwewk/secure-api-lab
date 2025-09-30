@@ -1,17 +1,28 @@
-// Підключаємо фреймворк Express
 const express = require('express');
-// Створюємо екземпляр додатку
+const { documents, employees } = require('./data');
 const app = express();
-// Визначаємо порт, на якому буде працювати сервер
 const PORT = 3000;
 
-// Створюємо простий маршрут для кореневого URL ('/')
-// Він буде відповідати на GET-запити
-app.get('/', (req, res) => {
-  res.send('Hello World! The server is running.');
+app.use(express.json());
+
+app.get('/documents', (req, res) => {
+  res.status(200).json(documents);
 });
 
-// Запускаємо сервер і змушуємо його "слухати" вказаний порт
+app.post('/documents', (req, res) => {
+
+  const newDocument = req.body;
+
+  newDocument.id = Date.now();
+  documents.push(newDocument);
+  res.status(201).json(newDocument);
+});
+
+app.get('/employees', (req, res) => {
+  res.status(200).json(employees);
+});
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
